@@ -72,13 +72,13 @@
 <body>
   <h1>SmartAgentX</h1>
   <div>
-    <input type="text" id="goal" placeholder="Describe your objective (e.g. launch a DAO)" />
+    <input type="text" id="goal" placeholder="Enter any goal: create a DAO, learn Python..." />
     <button onclick="runAgent()">Run</button>
   </div>
 
   <div class="counter" id="counter"></div>
   <div id="output" class="output" style="display:none;">
-    <h2>Agent's Extended Plan</h2>
+    <h2>Agent's Master Plan</h2>
     <ol id="plan"></ol>
   </div>
   <div class="logs" id="logs" style="display:none;"></div>
@@ -96,11 +96,11 @@
     document.getElementById("counter").textContent = `🚀 ${sessionCount} goals completed with SmartAgentX`;
 
     const tips = [
-      "Tip: Planning beats improvisation 99% of the time.",
-      "Tip: A token without purpose is just noise.",
-      "Tip: Use constraints to spark creativity.",
-      "Tip: The first draft is never final. Iterate.",
-      "Tip: Your goal is a project. Break it like one."
+      "Tip: Great agents adapt faster than they execute.",
+      "Tip: If it's worth doing, it's worth planning in detail.",
+      "Tip: SmartAgentX is your blueprint, not your boss.",
+      "Tip: Think big, but implement small chunks.",
+      "Tip: Systems scale. Start building one."
     ];
 
     function runAgent() {
@@ -112,16 +112,16 @@
       const tip = document.getElementById("tip");
 
       logs.style.display = output.style.display = "block";
-      logs.textContent = `> Received input: \"${input}\"\n> Initializing plan generation...\n`;
+      logs.textContent = `> SmartAgentX activated with prompt: \"${input}\"\n> Reasoning through objective...\n`;
       planBox.innerHTML = "";
 
-      const steps = generateLongStructuredPlan(input);
+      const steps = generateExpandedPlan(input);
       steps.forEach((step, i) => {
         setTimeout(() => {
           const li = document.createElement("li");
           li.innerHTML = `<strong>${step.title}</strong><br><ul>${step.details.map(d => `<li>${d}</li>`).join('')}</ul>`;
           planBox.appendChild(li);
-          logs.textContent += `> Step ${i + 1} completed: ${step.title}\n`;
+          logs.textContent += `> Step ${i + 1}: ${step.title}\n`;
         }, i * 1200);
       });
 
@@ -131,93 +131,70 @@
       tip.textContent = tips[Math.floor(Math.random() * tips.length)];
     }
 
-    function generateLongStructuredPlan(goal) {
-      const topic = goal.toLowerCase();
-      const base = [
-        {
-          title: "Define the Objective Clearly",
-          details: [
-            "What does success look like?",
-            "Who benefits and how?",
-            "What is the deadline or timeline?"
-          ]
-        },
-        {
-          title: "Break the Goal Into Subcomponents",
-          details: [
-            "Identify key areas: tech, community, legal, etc.",
-            "Assign ownership or roles if working in a team",
-            "Create subtasks from each area"
-          ]
-        },
-        {
-          title: "Conduct Necessary Research",
-          details: [
-            "What existing models or competitors exist?",
-            "What are the risks or constraints?",
-            "Any regulations or ethical concerns?"
-          ]
-        },
-        {
-          title: "Prototype or Simulate",
-          details: [
-            "Design mockups, wireframes or workflows",
-            "Use low-code tools or templates",
-            "Test in a sandbox or devnet if technical"
-          ]
-        },
-        {
-          title: "Build an Execution Timeline",
-          details: [
-            "Prioritize key milestones",
-            "Set realistic deadlines",
-            "Include checkpoints for feedback"
-          ]
-        },
-        {
-          title: "Communicate & Build in Public",
-          details: [
-            "Share early learnings or drafts",
-            "Collect feedback continuously",
-            "Build a waitlist or audience"
-          ]
-        },
-        {
-          title: "Launch Minimally, Iterate Aggressively",
-          details: [
-            "Don't wait for perfect — launch!",
-            "Track engagement or usage",
-            "Fix fast, adapt based on real data"
-          ]
-        },
-        {
-          title: "Scale, Optimize, and Systematize",
-          details: [
-            "What can be automated?",
-            "Build documentation or SOPs",
-            "Plan for version 2.0 and beyond"
-          ]
-        }
+    function generateExpandedPlan(goal) {
+      const keywords = goal.toLowerCase();
+      const core = [
+        { title: "Clarify Your Objective", details: [
+          "Why is this goal important now?",
+          "What does success look like in 3 months?",
+          "What assumptions are you making?"
+        ]},
+        { title: "Break Down the Goal into Strategic Pillars", details: [
+          "List the 3-4 core parts of the problem",
+          "Assign a name, owner, and estimated timeline",
+          "Start documenting early"
+        ]},
+        { title: "Map Out Required Knowledge or Tools", details: [
+          "What do you need to learn, delegate, or build?",
+          "Which frameworks, languages, or APIs are involved?",
+          "Create a Notion or board to track this"
+        ]},
+        { title: "Prototype Your Idea (Lo-Fi)", details: [
+          "Use paper, Miro, Figma, or code",
+          "Don't aim for pretty — aim for functional",
+          "Test logic, flow, or story" ]},
+        { title: "Test with a Real Feedback Loop", details: [
+          "Share with 1–3 relevant people",
+          "Ask: What’s missing, unclear, risky?",
+          "Refine based on pain points" ]},
+        { title: "Build Version 0.1 with Constraints", details: [
+          "Use limited tools intentionally",
+          "Document trade-offs in each component",
+          "Push to GitHub, Airtable, etc." ]},
+        { title: "Prepare for Iteration & Scaling", details: [
+          "What if 10x more users joined tomorrow?",
+          "Where will things break first?",
+          "Plan scalability in infrastructure AND support" ]},
+        { title: "Launch with Intentional Positioning", details: [
+          "Craft headline + subtext that speaks directly to audience",
+          "Use launch platforms (Product Hunt, Twitter, etc.)",
+          "Track initial reaction carefully" ]},
+        { title: "Refactor and Systematize", details: [
+          "Clean up naming, folders, deployment",
+          "Create SOPs (Standard Operating Procedures)",
+          "Prepare handoff docs or contributor guides" ]},
+        { title: "Plan Long-Term Governance or Maintenance", details: [
+          "Who owns this now?",
+          "Who updates it in 3, 6, 12 months?",
+          "How does community input shape the roadmap?" ]},
       ];
 
-      if (topic.includes("token")) {
-        base.unshift({
-          title: "Clarify Tokenomics",
-          details: [
-            "Define supply, vesting, and inflation model",
-            "Assign utility: governance, payment, access...",
-            "Model long-term sustainability"]
-        });
-        base.unshift({
-          title: "Choose Blockchain and Standards",
-          details: [
-            "Ethereum, Solana, BNB or L2?",
-            "ERC-20 vs ERC-721 vs custom",
-            "Test deployment scripts early"]
-        });
+      if (keywords.includes("token")) {
+        core.unshift({
+          title: "Design Tokenomics", details: [
+            "Total supply, inflation or burn?",
+            "What utility: governance, access, yield?",
+            "What will drive demand long-term?"
+          ]});
+        core.unshift({
+          title: "Choose Blockchain & Tech Stack", details: [
+            "Ethereum, Solana, Polygon, etc.",
+            "Smart contract language: Solidity, Rust...",
+            "Use OpenZeppelin or custom libraries?"
+          ]});
       }
 
-      return base;
+      return core;
     }
 
     function submitEmail() {

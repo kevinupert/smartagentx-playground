@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SmartAgentX</title>
   <style>
     body {
-      background: #111;
-      color: #eee;
+      background: #0b0b0b;
+      color: #f0f0f0;
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 2rem;
@@ -16,7 +16,7 @@
       align-items: center;
     }
     h1 {
-      font-size: 2em;
+      font-size: 2rem;
       margin-bottom: 1rem;
     }
     input, button {
@@ -26,7 +26,7 @@
       border-radius: 6px;
     }
     input {
-      width: 300px;
+      width: 320px;
       margin-right: 0.5rem;
       outline: none;
     }
@@ -35,137 +35,152 @@
       color: #fff;
       cursor: pointer;
     }
-    .output, .logs, .tip {
+    .output, .logs, .tip, .counter, .email {
       margin-top: 2rem;
-      background: #1c1c1c;
+      background: #161616;
       padding: 1rem;
       border-radius: 8px;
       width: 90%;
-      max-width: 650px;
+      max-width: 700px;
     }
     .logs {
       font-family: monospace;
       font-size: 0.9rem;
-      color: #99ccff;
+      color: #8cd2ff;
       white-space: pre-wrap;
     }
     ul {
-      padding-left: 1.2rem;
+      padding-left: 1.5rem;
     }
     .tip {
+      font-style: italic;
       font-size: 0.9rem;
       color: #bbb;
       text-align: center;
-      font-style: italic;
+    }
+    .counter {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #9ff;
+    }
+    .email input {
+      width: 70%;
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
   <h1>SmartAgentX</h1>
   <div>
-    <input type="text" id="goal" placeholder="Enter a goal like 'build a crypto token'" />
+    <input type="text" id="goal" placeholder="Enter your goal (e.g. build a token)" />
     <button onclick="runAgent()">Run</button>
   </div>
 
+  <div class="counter" id="counter"></div>
   <div id="output" class="output" style="display:none;">
     <h2>Agent’s Plan</h2>
     <ul id="plan"></ul>
   </div>
-
   <div class="logs" id="logs" style="display:none;"></div>
   <div class="tip" id="tip"></div>
 
+  <div class="email">
+    <h3>📩 Stay in the loop!</h3>
+    <input type="email" id="email" placeholder="Enter your email" />
+    <button onclick="submitEmail()">Notify Me</button>
+    <div id="emailConfirm" style="margin-top:0.5rem;color:#9f9;display:none;">✅ Subscribed!</div>
+  </div>
+
   <script>
-    const plans = {
-      "find startup ideas": [
-        "Research current market trends",
-        "Identify underserved problems",
-        "Brainstorm solution ideas",
-        "Validate interest through surveys"
-      ],
-      "learn a new language": [
-        "Pick your target language",
-        "Set achievable goals (15 min/day)",
-        "Use Duolingo or a tutor",
-        "Practice by watching content"
-      ],
-      "build a crypto token": [
-        "Define token purpose and utility",
-        "Choose blockchain and standard (ERC-20)",
-        "Write and test smart contract",
-        "Deploy and market to community"
-      ],
-      "become an ai engineer": [
-        "Master Python and math basics",
-        "Study ML/DL (PyTorch, TensorFlow)",
-        "Read research papers and blogs",
-        "Build and publish real-world projects"
-      ],
-      "grow a twitter audience": [
-        "Pick your niche and target persona",
-        "Post 2–3 high-value tweets per day",
-        "Engage with accounts in your field",
-        "Track what performs and iterate"
-      ]
-    };
+    let sessionCount = localStorage.getItem('smartAgentCount') || 0;
+    document.getElementById("counter").textContent = `🚀 ${sessionCount} goals completed with SmartAgentX`;
 
     const tips = [
-      "Tip: Agents that iterate are more effective than those that overthink.",
-      "Tip: Break any goal into tiny, testable steps.",
-      "Tip: Your first version will suck. Ship anyway.",
-      "Tip: The best agent is consistent, not perfect.",
-      "Tip: Most failures are due to inertia, not ignorance."
+      "Tip: Simplicity scales. Start with small, testable actions.",
+      "Tip: Token utility > Token hype.",
+      "Tip: Think like an agent. Plan, act, reflect, repeat.",
+      "Tip: You can pivot your goal without quitting it.",
+      "Tip: SmartAgentX is what you make it — iterate."
     ];
 
     function runAgent() {
-      const input = document.getElementById("goal").value.trim().toLowerCase();
-      const output = document.getElementById("output");
-      const planList = document.getElementById("plan");
+      const goal = document.getElementById("goal").value.trim();
+      if (!goal) return;
       const logs = document.getElementById("logs");
+      const planBox = document.getElementById("plan");
+      const output = document.getElementById("output");
       const tip = document.getElementById("tip");
+      logs.style.display = output.style.display = "block";
+      logs.textContent = `> Goal received: "${goal}"
+> Generating agent plan...\n`;
+      planBox.innerHTML = "";
 
-      const matchedKey = Object.keys(plans).find(k => k === input);
-      const steps = matchedKey ? plans[matchedKey] : [
-        "Break down the goal into subtasks",
-        "Search for tools or knowledge",
-        "Plan small iterations",
-        "Execute and improve"
-      ];
-
-      // Reset
-      planList.innerHTML = "";
-      logs.innerText = `> Received goal: "${input}"\n> Parsing...\n`;
-      output.style.display = "block";
-      logs.style.display = "block";
-
-      // Animate plan
-      steps.forEach((step, index) => {
+      const plan = generateDynamicSteps(goal);
+      plan.forEach((step, i) => {
         setTimeout(() => {
           const li = document.createElement("li");
           li.textContent = "";
-          planList.appendChild(li);
-
+          planBox.appendChild(li);
           animateTyping(li, step, 20);
-          logs.innerText += `> Step ${index + 1} generated: ${step}\n`;
-        }, index * 700);
+          logs.textContent += `> Step ${i + 1}: ${step}\n`;
+        }, i * 800);
       });
 
-      // Random tip
-      tip.innerText = tips[Math.floor(Math.random() * tips.length)];
+      sessionCount++;
+      localStorage.setItem('smartAgentCount', sessionCount);
+      document.getElementById("counter").textContent = `🚀 ${sessionCount} goals completed with SmartAgentX`;
+      tip.textContent = tips[Math.floor(Math.random() * tips.length)];
     }
 
-    function animateTyping(element, text, speed) {
+    function generateDynamicSteps(goal) {
+      if (goal.toLowerCase().includes("token")) {
+        return [
+          "Define your token's purpose and audience",
+          "Choose a blockchain and token standard",
+          "Write and verify the smart contract",
+          "Deploy and announce to your community"
+        ];
+      } else if (goal.toLowerCase().includes("startup")) {
+        return [
+          "Identify a real-world problem",
+          "Sketch out a minimum viable solution",
+          "Validate with real users",
+          "Iterate and pitch to early adopters"
+        ];
+      } else if (goal.toLowerCase().includes("learn")) {
+        return [
+          "Choose the learning method (video, book, course)",
+          "Set a weekly schedule",
+          "Practice consistently",
+          "Track and adjust progress"
+        ];
+      } else {
+        return [
+          `Break "${goal}" into 3 key actions`,
+          "Search tools or methods to support each part",
+          "Assign time or resources to each step",
+          "Execute, review, and optimize"
+        ];
+      }
+    }
+
+    function animateTyping(el, text, speed) {
       let i = 0;
       function type() {
         if (i < text.length) {
-          element.textContent += text.charAt(i);
+          el.textContent += text.charAt(i);
           i++;
           setTimeout(type, speed);
         }
       }
       type();
     }
+
+    function submitEmail() {
+      const email = document.getElementById("email").value.trim();
+      if (!email.includes("@")) return alert("Invalid email");
+      document.getElementById("emailConfirm").style.display = "block";
+    }
   </script>
 </body>
 </html>
-

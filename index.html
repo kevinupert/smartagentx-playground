@@ -85,12 +85,16 @@
       const goal = document.getElementById("goal").value.trim();
       const planList = document.getElementById("plan");
       const output = document.getElementById("output");
-      const steps = plans[goal] || [
-        "Break down the goal into subtasks",
-        "Search for information or tools",
-        "Evaluate paths to success",
-        "Execute and iterate"
-      ];
+      const normalizedGoal = goal.toLowerCase();
+      const steps = Object.keys(plans).find(key => key.toLowerCase() === normalizedGoal)
+        ? plans[Object.keys(plans).find(key => key.toLowerCase() === normalizedGoal)]
+        : [
+          "Break down the goal into subtasks",
+          "Search for information or tools",
+          "Evaluate paths to success",
+          "Execute and iterate"
+        ];
+      
       planList.innerHTML = "";
       steps.forEach(step => {
         const li = document.createElement("li");

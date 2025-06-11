@@ -6,8 +6,8 @@
   <title>SmartAgentX</title>
   <style>
     body {
-      background: #0b0b0b;
-      color: #f0f0f0;
+      background: #0a0a0a;
+      color: #f8f8f8;
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 2rem;
@@ -37,11 +37,11 @@
     }
     .output, .logs, .tip, .counter, .email {
       margin-top: 2rem;
-      background: #161616;
+      background: #121212;
       padding: 1rem;
       border-radius: 8px;
       width: 90%;
-      max-width: 700px;
+      max-width: 800px;
     }
     .logs {
       font-family: monospace;
@@ -49,7 +49,7 @@
       color: #8cd2ff;
       white-space: pre-wrap;
     }
-    ul {
+    ul, ol {
       padding-left: 1.5rem;
     }
     .tip {
@@ -72,113 +72,157 @@
 <body>
   <h1>SmartAgentX</h1>
   <div>
-    <input type="text" id="goal" placeholder="Enter your goal (e.g. build a token)" />
+    <input type="text" id="goal" placeholder="Describe your objective (e.g. launch a DAO)" />
     <button onclick="runAgent()">Run</button>
   </div>
 
   <div class="counter" id="counter"></div>
   <div id="output" class="output" style="display:none;">
-    <h2>Agent’s Plan</h2>
-    <ul id="plan"></ul>
+    <h2>Agent's Extended Plan</h2>
+    <ol id="plan"></ol>
   </div>
   <div class="logs" id="logs" style="display:none;"></div>
   <div class="tip" id="tip"></div>
 
   <div class="email">
-    <h3>📩 Stay in the loop!</h3>
-    <input type="email" id="email" placeholder="Enter your email" />
-    <button onclick="submitEmail()">Notify Me</button>
-    <div id="emailConfirm" style="margin-top:0.5rem;color:#9f9;display:none;">✅ Subscribed!</div>
+    <h3>📩 Be notified when $SMARTX launches</h3>
+    <input type="email" id="email" placeholder="Your email" />
+    <button onclick="submitEmail()">Subscribe</button>
+    <div id="emailConfirm" style="margin-top:0.5rem;color:#9f9;display:none;">✅ Email captured!</div>
   </div>
 
   <script>
-    let sessionCount = localStorage.getItem('smartAgentCount') || 0;
+    let sessionCount = localStorage.getItem('smartAgentSessions') || 0;
     document.getElementById("counter").textContent = `🚀 ${sessionCount} goals completed with SmartAgentX`;
 
     const tips = [
-      "Tip: Simplicity scales. Start with small, testable actions.",
-      "Tip: Token utility > Token hype.",
-      "Tip: Think like an agent. Plan, act, reflect, repeat.",
-      "Tip: You can pivot your goal without quitting it.",
-      "Tip: SmartAgentX is what you make it — iterate."
+      "Tip: Planning beats improvisation 99% of the time.",
+      "Tip: A token without purpose is just noise.",
+      "Tip: Use constraints to spark creativity.",
+      "Tip: The first draft is never final. Iterate.",
+      "Tip: Your goal is a project. Break it like one."
     ];
 
     function runAgent() {
-      const goal = document.getElementById("goal").value.trim();
-      if (!goal) return;
+      const input = document.getElementById("goal").value.trim();
+      if (!input) return;
       const logs = document.getElementById("logs");
       const planBox = document.getElementById("plan");
       const output = document.getElementById("output");
       const tip = document.getElementById("tip");
+
       logs.style.display = output.style.display = "block";
-      logs.textContent = `> Goal received: "${goal}"
-> Generating agent plan...\n`;
+      logs.textContent = `> Received input: \"${input}\"\n> Initializing plan generation...\n`;
       planBox.innerHTML = "";
 
-      const plan = generateDynamicSteps(goal);
-      plan.forEach((step, i) => {
+      const steps = generateLongStructuredPlan(input);
+      steps.forEach((step, i) => {
         setTimeout(() => {
           const li = document.createElement("li");
-          li.textContent = "";
+          li.innerHTML = `<strong>${step.title}</strong><br><ul>${step.details.map(d => `<li>${d}</li>`).join('')}</ul>`;
           planBox.appendChild(li);
-          animateTyping(li, step, 20);
-          logs.textContent += `> Step ${i + 1}: ${step}\n`;
-        }, i * 800);
+          logs.textContent += `> Step ${i + 1} completed: ${step.title}\n`;
+        }, i * 1200);
       });
 
       sessionCount++;
-      localStorage.setItem('smartAgentCount', sessionCount);
+      localStorage.setItem('smartAgentSessions', sessionCount);
       document.getElementById("counter").textContent = `🚀 ${sessionCount} goals completed with SmartAgentX`;
       tip.textContent = tips[Math.floor(Math.random() * tips.length)];
     }
 
-    function generateDynamicSteps(goal) {
-      if (goal.toLowerCase().includes("token")) {
-        return [
-          "Define your token's purpose and audience",
-          "Choose a blockchain and token standard",
-          "Write and verify the smart contract",
-          "Deploy and announce to your community"
-        ];
-      } else if (goal.toLowerCase().includes("startup")) {
-        return [
-          "Identify a real-world problem",
-          "Sketch out a minimum viable solution",
-          "Validate with real users",
-          "Iterate and pitch to early adopters"
-        ];
-      } else if (goal.toLowerCase().includes("learn")) {
-        return [
-          "Choose the learning method (video, book, course)",
-          "Set a weekly schedule",
-          "Practice consistently",
-          "Track and adjust progress"
-        ];
-      } else {
-        return [
-          `Break "${goal}" into 3 key actions`,
-          "Search tools or methods to support each part",
-          "Assign time or resources to each step",
-          "Execute, review, and optimize"
-        ];
-      }
-    }
-
-    function animateTyping(el, text, speed) {
-      let i = 0;
-      function type() {
-        if (i < text.length) {
-          el.textContent += text.charAt(i);
-          i++;
-          setTimeout(type, speed);
+    function generateLongStructuredPlan(goal) {
+      const topic = goal.toLowerCase();
+      const base = [
+        {
+          title: "Define the Objective Clearly",
+          details: [
+            "What does success look like?",
+            "Who benefits and how?",
+            "What is the deadline or timeline?"
+          ]
+        },
+        {
+          title: "Break the Goal Into Subcomponents",
+          details: [
+            "Identify key areas: tech, community, legal, etc.",
+            "Assign ownership or roles if working in a team",
+            "Create subtasks from each area"
+          ]
+        },
+        {
+          title: "Conduct Necessary Research",
+          details: [
+            "What existing models or competitors exist?",
+            "What are the risks or constraints?",
+            "Any regulations or ethical concerns?"
+          ]
+        },
+        {
+          title: "Prototype or Simulate",
+          details: [
+            "Design mockups, wireframes or workflows",
+            "Use low-code tools or templates",
+            "Test in a sandbox or devnet if technical"
+          ]
+        },
+        {
+          title: "Build an Execution Timeline",
+          details: [
+            "Prioritize key milestones",
+            "Set realistic deadlines",
+            "Include checkpoints for feedback"
+          ]
+        },
+        {
+          title: "Communicate & Build in Public",
+          details: [
+            "Share early learnings or drafts",
+            "Collect feedback continuously",
+            "Build a waitlist or audience"
+          ]
+        },
+        {
+          title: "Launch Minimally, Iterate Aggressively",
+          details: [
+            "Don't wait for perfect — launch!",
+            "Track engagement or usage",
+            "Fix fast, adapt based on real data"
+          ]
+        },
+        {
+          title: "Scale, Optimize, and Systematize",
+          details: [
+            "What can be automated?",
+            "Build documentation or SOPs",
+            "Plan for version 2.0 and beyond"
+          ]
         }
+      ];
+
+      if (topic.includes("token")) {
+        base.unshift({
+          title: "Clarify Tokenomics",
+          details: [
+            "Define supply, vesting, and inflation model",
+            "Assign utility: governance, payment, access...",
+            "Model long-term sustainability"]
+        });
+        base.unshift({
+          title: "Choose Blockchain and Standards",
+          details: [
+            "Ethereum, Solana, BNB or L2?",
+            "ERC-20 vs ERC-721 vs custom",
+            "Test deployment scripts early"]
+        });
       }
-      type();
+
+      return base;
     }
 
     function submitEmail() {
       const email = document.getElementById("email").value.trim();
-      if (!email.includes("@")) return alert("Invalid email");
+      if (!email.includes("@")) return alert("Invalid email address");
       document.getElementById("emailConfirm").style.display = "block";
     }
   </script>

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SmartAgentX Playground</title>
+  <title>SmartAgentX</title>
   <style>
     body {
-      background: #0d0d0d;
-      color: #f4f4f4;
-      font-family: Arial, sans-serif;
+      background: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 2rem;
       display: flex;
@@ -19,90 +19,153 @@
       font-size: 2em;
       margin-bottom: 1rem;
     }
-    input {
-      padding: 0.5rem 1rem;
-      width: 300px;
+    input, button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
       border: none;
       border-radius: 6px;
-      font-size: 1rem;
+    }
+    input {
+      width: 300px;
       margin-right: 0.5rem;
+      outline: none;
     }
     button {
       background: #2cc3b5;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-size: 1rem;
+      color: #fff;
       cursor: pointer;
-      color: white;
     }
-    .result {
+    .output, .logs, .tip {
       margin-top: 2rem;
-      background: #1b1b1b;
+      background: #1c1c1c;
       padding: 1rem;
       border-radius: 8px;
-      width: 80%;
-      max-width: 600px;
+      width: 90%;
+      max-width: 650px;
+    }
+    .logs {
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #99ccff;
+      white-space: pre-wrap;
     }
     ul {
-      padding-left: 1.5rem;
+      padding-left: 1.2rem;
+    }
+    .tip {
+      font-size: 0.9rem;
+      color: #bbb;
+      text-align: center;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <h1>SmartAgentX Playground</h1>
+  <h1>SmartAgentX</h1>
   <div>
-    <input type="text" id="goal" placeholder="Find startup ideas" />
+    <input type="text" id="goal" placeholder="Enter a goal like 'build a crypto token'" />
     <button onclick="runAgent()">Run</button>
   </div>
-  <div id="output" class="result" style="display: none;">
-    <h2>Agent's plan</h2>
+
+  <div id="output" class="output" style="display:none;">
+    <h2>Agent’s Plan</h2>
     <ul id="plan"></ul>
   </div>
 
+  <div class="logs" id="logs" style="display:none;"></div>
+  <div class="tip" id="tip"></div>
+
   <script>
+    const plans = {
+      "find startup ideas": [
+        "Research current market trends",
+        "Identify underserved problems",
+        "Brainstorm solution ideas",
+        "Validate interest through surveys"
+      ],
+      "learn a new language": [
+        "Pick your target language",
+        "Set achievable goals (15 min/day)",
+        "Use Duolingo or a tutor",
+        "Practice by watching content"
+      ],
+      "build a crypto token": [
+        "Define token purpose and utility",
+        "Choose blockchain and standard (ERC-20)",
+        "Write and test smart contract",
+        "Deploy and market to community"
+      ],
+      "become an ai engineer": [
+        "Master Python and math basics",
+        "Study ML/DL (PyTorch, TensorFlow)",
+        "Read research papers and blogs",
+        "Build and publish real-world projects"
+      ],
+      "grow a twitter audience": [
+        "Pick your niche and target persona",
+        "Post 2–3 high-value tweets per day",
+        "Engage with accounts in your field",
+        "Track what performs and iterate"
+      ]
+    };
+
+    const tips = [
+      "Tip: Agents that iterate are more effective than those that overthink.",
+      "Tip: Break any goal into tiny, testable steps.",
+      "Tip: Your first version will suck. Ship anyway.",
+      "Tip: The best agent is consistent, not perfect.",
+      "Tip: Most failures are due to inertia, not ignorance."
+    ];
+
     function runAgent() {
-      const plans = {
-        "Find startup ideas": [
-          "Research market trends",
-          "Identify problems to solve",
-          "Brainstorm potential solutions",
-          "Evaluate feasibility and demand"
-        ],
-        "Learn a new language": [
-          "Pick your target language",
-          "Set learning goals",
-          "Use an app or tutor",
-          "Practice daily with immersion"
-        ],
-        "Create a website": [
-          "Define purpose and audience",
-          "Choose tools (e.g. HTML/CSS)",
-          "Design layout and content",
-          "Deploy on GitHub Pages or Netlify"
-        ]
-      };
-      const goal = document.getElementById("goal").value.trim();
-      const planList = document.getElementById("plan");
+      const input = document.getElementById("goal").value.trim().toLowerCase();
       const output = document.getElementById("output");
-      const normalizedGoal = goal.toLowerCase();
-      const steps = Object.keys(plans).find(key => key.toLowerCase() === normalizedGoal)
-        ? plans[Object.keys(plans).find(key => key.toLowerCase() === normalizedGoal)]
-        : [
-          "Break down the goal into subtasks",
-          "Search for information or tools",
-          "Evaluate paths to success",
-          "Execute and iterate"
-        ];
-      
+      const planList = document.getElementById("plan");
+      const logs = document.getElementById("logs");
+      const tip = document.getElementById("tip");
+
+      const matchedKey = Object.keys(plans).find(k => k === input);
+      const steps = matchedKey ? plans[matchedKey] : [
+        "Break down the goal into subtasks",
+        "Search for tools or knowledge",
+        "Plan small iterations",
+        "Execute and improve"
+      ];
+
+      // Reset
       planList.innerHTML = "";
-      steps.forEach(step => {
-        const li = document.createElement("li");
-        li.textContent = step;
-        planList.appendChild(li);
-      });
+      logs.innerText = `> Received goal: "${input}"\n> Parsing...\n`;
       output.style.display = "block";
+      logs.style.display = "block";
+
+      // Animate plan
+      steps.forEach((step, index) => {
+        setTimeout(() => {
+          const li = document.createElement("li");
+          li.textContent = "";
+          planList.appendChild(li);
+
+          animateTyping(li, step, 20);
+          logs.innerText += `> Step ${index + 1} generated: ${step}\n`;
+        }, index * 700);
+      });
+
+      // Random tip
+      tip.innerText = tips[Math.floor(Math.random() * tips.length)];
+    }
+
+    function animateTyping(element, text, speed) {
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
     }
   </script>
 </body>
 </html>
+

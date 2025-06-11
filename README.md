@@ -9,7 +9,7 @@ Built to simulate agent reasoning and planning. Powered by humans. Tokenized by 
 
 ## 🌐 Live Demo
 
-👉 [smartagentx.github.io/smartagentx-playground](https://smartagentx.github.io/smartagentx-playground) *(enable GitHub Pages after uploading `index.html`)*
+👉 https://kevinupert.github.io/smartagentx-playground/
 
 ---
 

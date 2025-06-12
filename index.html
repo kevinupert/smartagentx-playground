@@ -67,6 +67,23 @@
       width: 70%;
       margin-bottom: 0.5rem;
     }
+    .token {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #141414;
+      color: #9ff;
+      font-size: 0.95rem;
+    }
+    .token button {
+      margin-top: 0.5rem;
+      background: #2cc3b5;
+      color: #fff;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -74,6 +91,12 @@
   <div>
     <input type="text" id="goal" placeholder="Enter any goal: create a DAO, learn Python..." />
     <button onclick="runAgent()">Run</button>
+  </div>
+
+  <div class="token">
+    <strong>Token Contract:</strong><br>
+    <code id="tokenAddr">Cpeg3KDafAe6vDvDPz8YYqHK6qWKQqxerMZw6E3uyBLV</code><br>
+    <button onclick="copyToken()">📋 Copy Address</button>
   </div>
 
   <div class="counter" id="counter"></div>
@@ -112,7 +135,8 @@
       const tip = document.getElementById("tip");
 
       logs.style.display = output.style.display = "block";
-      logs.textContent = `> SmartAgentX activated with prompt: \"${input}\"\n> Reasoning through objective...\n`;
+      logs.textContent = `> SmartAgentX activated with prompt: "${input}"
+> Reasoning through objective...\n`;
       planBox.innerHTML = "";
 
       const steps = generateExpandedPlan(input);
@@ -201,6 +225,13 @@
       const email = document.getElementById("email").value.trim();
       if (!email.includes("@")) return alert("Invalid email address");
       document.getElementById("emailConfirm").style.display = "block";
+    }
+
+    function copyToken() {
+      const token = document.getElementById("tokenAddr").textContent;
+      navigator.clipboard.writeText(token).then(() => {
+        alert("Token address copied to clipboard!");
+      });
     }
   </script>
 </body>

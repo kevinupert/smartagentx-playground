@@ -35,7 +35,7 @@
       color: #fff;
       cursor: pointer;
     }
-    .output, .logs, .tip, .counter, .email {
+    .output, .logs, .tip, .counter, .token {
       margin-top: 2rem;
       background: #121212;
       padding: 1rem;
@@ -62,19 +62,6 @@
       text-align: center;
       font-size: 0.95rem;
       color: #9ff;
-    }
-    .email input {
-      width: 70%;
-      margin-bottom: 0.5rem;
-    }
-    .token {
-      margin-top: 2rem;
-      padding: 1rem;
-      border: 1px solid #444;
-      border-radius: 8px;
-      background: #141414;
-      color: #9ff;
-      font-size: 0.95rem;
     }
     .token button {
       margin-top: 0.5rem;
@@ -106,13 +93,6 @@
   </div>
   <div class="logs" id="logs" style="display:none;"></div>
   <div class="tip" id="tip"></div>
-
-  <div class="email">
-    <h3>📩 Be notified when $SMARTX launches</h3>
-    <input type="email" id="email" placeholder="Your email" />
-    <button onclick="submitEmail()">Subscribe</button>
-    <div id="emailConfirm" style="margin-top:0.5rem;color:#9f9;display:none;">✅ Email captured!</div>
-  </div>
 
   <script>
     let sessionCount = localStorage.getItem('smartAgentSessions') || 0;
@@ -219,12 +199,6 @@
       }
 
       return core;
-    }
-
-    function submitEmail() {
-      const email = document.getElementById("email").value.trim();
-      if (!email.includes("@")) return alert("Invalid email address");
-      document.getElementById("emailConfirm").style.display = "block";
     }
 
     function copyToken() {
